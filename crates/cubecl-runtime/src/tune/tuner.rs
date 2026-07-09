@@ -13,6 +13,7 @@ use crate::config::{Logger, autotune::AutotuneLogLevel};
 use crate::server::LaunchError;
 use crate::tune::{AutotuneResult, TuneCache, tune_benchmark};
 use crate::{client::ComputeClient, runtime::Runtime};
+use cubecl_ir::DeviceProperties;
 
 use super::{AutotuneKey, AutotuneOutput, TunableSet, TuneCacheResult, TuneInputs};
 
@@ -119,9 +120,9 @@ struct TuneRequest<K: AutotuneKey> {
 impl<K: AutotuneKey> Tuner<K> {
     /// Create a tuner. Its cache is seeded from the persistent on-disk cache when
     /// `std_io` is enabled.
-    pub fn new(name: &str, device_id: &str) -> Self {
+    pub fn new(name: &str, device_id: &str, properties: &DeviceProperties) -> Self {
         Self {
-            cache: Arc::new(spin::Mutex::new(TuneCache::new(name, device_id))),
+            cache: Arc::new(spin::Mutex::new(TuneCache::new(name, device_id, properties))),
             logger: Arc::new(spin::Mutex::new(Logger::new())),
         }
     }

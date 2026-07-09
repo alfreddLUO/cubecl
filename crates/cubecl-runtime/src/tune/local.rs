@@ -137,7 +137,7 @@ where
                 .entry(id.clone())
                 .or_insert_with(move || {
                     let name = self.name.replace("::", "-");
-                    Arc::new(Tuner::new(&name, &id.to_string()))
+                    Arc::new(Tuner::new(&name, &id.to_string(), client.properties()))
                 })
                 .clone()
         };

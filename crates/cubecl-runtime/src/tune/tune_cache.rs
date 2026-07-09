@@ -10,6 +10,7 @@ use serde::{Deserialize, Serialize};
 
 use super::{AutotuneError, AutotuneKey, AutotuneOutcome};
 use alloc::string::String;
+use cubecl_ir::DeviceProperties;
 use hashbrown::HashMap;
 
 #[derive(Debug)]
@@ -108,21 +109,23 @@ impl<K: AutotuneKey> TuneCache<K> {
     pub(crate) fn new(
         #[cfg_attr(not(std_io), allow(unused_variables))] name: &str,
         #[cfg_attr(not(std_io), allow(unused_variables))] device_id: &str,
+        #[cfg_attr(not(std_io), allow(unused_variables))] properties: &DeviceProperties,
     ) -> Self {
         #[cfg(std_io)]
         {
             use crate::config::RuntimeConfig;
-            use std::format;
+            use crate::tune::{cache_scope, scoped_persistence_key};
 
             let root = crate::config::CubeClRuntimeConfig::get()
                 .autotune
                 .cache
                 .root();
             let options = cubecl_common::cache::CacheOption::default();
+            let scope = cache_scope(properties);
             let mut cache = TuneCache {
                 in_memory_cache: HashMap::new(),
                 persistent_cache: Cache::new(
-                    format!("{device_id}/{name}"),
+                    scoped_persistence_key(scope, device_id, name),
                     options.root(root).name("autotune"),
                 ),
             };
