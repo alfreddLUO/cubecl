@@ -119,9 +119,9 @@ struct TuneRequest<K: AutotuneKey> {
 impl<K: AutotuneKey> Tuner<K> {
     /// Create a tuner. Its cache is seeded from the persistent on-disk cache when
     /// `std_io` is enabled.
-    pub fn new(name: &str, device_id: &str) -> Self {
+    pub fn new(name: &str, device_id: &str, properties: &cubecl_ir::DeviceProperties) -> Self {
         Self {
-            cache: Arc::new(spin::Mutex::new(TuneCache::new(name, device_id))),
+            cache: Arc::new(spin::Mutex::new(TuneCache::new(name, device_id, properties))),
             logger: Arc::new(spin::Mutex::new(Logger::new())),
         }
     }

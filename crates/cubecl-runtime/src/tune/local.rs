@@ -130,6 +130,8 @@ where
     {
         let key = operations.generate_key(&inputs);
 
+        let properties = client.properties();
+
         let tuner = {
             let mut state_lock = self.state.lock();
             let state_map = state_lock.get_or_insert_with(|| HashMap::new());
@@ -137,7 +139,7 @@ where
                 .entry(id.clone())
                 .or_insert_with(move || {
                     let name = self.name.replace("::", "-");
-                    Arc::new(Tuner::new(&name, &id.to_string()))
+                    Arc::new(Tuner::new(&name, &id.to_string(), properties))
                 })
                 .clone()
         };
